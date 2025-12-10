@@ -1,0 +1,58 @@
+.page-wrapper {
+  width: 70%;
+  margin: auto;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.trans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trans-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.amount {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.date {
+  font-size: 14px;
+  color: gray;
+}
+
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.status.success {
+  background: #28a745;
+}
+
+.status.pending {
+  background: #ffc107;
+  color: #000;
+}
+
+.status.failed {
+  background: #dc3545;
+}

@@ -1,0 +1,44 @@
+.airtime-container {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 25px;
+}
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #be1d2d;
+}
+.form-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 15px;
+}
+
+.input:focus {
+  border-color: #be1d2d;
+}
+
+.submit-btn {
+  background: #be1d2d;
+  padding: 12px;
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.submit-btn:hover {
+  background: #8a151e;
+}

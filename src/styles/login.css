@@ -1,0 +1,168 @@
+/* styles/login.css */
+
+/* ===== Container ===== */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+/* ===== Card Container ===== */
+.card {
+  width: 80%;
+  max-width: 450px;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+/* ===== Logo Container ===== */
+.profile-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #be1d2d; /* Theme color */
+}
+.wallet-btn {
+  background: #be1d2d;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.wallet-btn:hover {
+  opacity: 0.85;
+}
+
+
+/* ===== Headings ===== */
+h4 {
+  font-weight: 650;
+  margin-bottom: 5px;
+  color: #222;
+}
+
+p.text-muted {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* ===== Inputs ===== */
+.form-control {
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  transition: all 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #be1d2d;
+  box-shadow: 0 0 6px rgba(190, 29, 45, 0.4);
+}
+
+/* ===== Primary Button ===== */
+button.btn {
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 600;
+  border: 2px solid #be1d2d;
+  color: #be1d2d;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+button.btn:hover {
+  background-color: #be1d2d;
+  color: #fff;
+  border-color: #be1d2d;
+}
+
+/* ===== Google Button ===== */
+#googleBtn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* ===== Link Styling ===== */
+p.text-center a {
+  color: #be1d2d;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+p.text-center a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Theme Toggle Button ===== */
+.toggle-btn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #be1d2d;
+}
+
+/* ============================= */
+/*           DARK MODE           */
+/* ============================= */
+body[data-theme="dark"] {
+  background: #1b1b1b;
+  color: #eee;
+}
+
+body[data-theme="dark"] .card {
+  background: #242424;
+  color: #fff;
+}
+
+body[data-theme="dark"] p.text-muted {
+  color: #b5b5b5;
+}
+
+body[data-theme="dark"] .form-control {
+  background: #333;
+  border: 1px solid #555;
+  color: #fff;
+}
+
+body[data-theme="dark"] .form-control:focus {
+  border-color: #be1d2d;
+  box-shadow: 0 0 6px rgba(190, 29, 45, 0.5);
+}
+
+body[data-theme="dark"] .toggle-btn {
+  color: #fff;
+}
+
+body[data-theme="dark"] button.btn {
+  border-color: #be1d2d;
+  color: #be1d2d;
+}
+body[data-theme="dark"] button.btn:hover {
+  background: #be1d2d;
+  color: #fff;
+}
