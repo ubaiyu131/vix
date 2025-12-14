@@ -83,14 +83,22 @@ const Dashboard = () => {
 
       {/* Bottom Action Buttons */}
       <div className="dashboard-actions">
-        <Link to="/transactions" className="action-btn">
-          Transactions
-        </Link>
+  <Link to="/transactions" className="action-btn">
+    <i className="bi bi-receipt"></i>
+    <span>Transactions</span>
+  </Link>
 
-        <button className="action-btn logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
+  <Link to="/profile" className="action-btn">
+    <i className="bi bi-person-circle"></i>
+    <span>Profile</span>
+  </Link>
+
+  <button className="action-btn logout-btn" onClick={handleLogout}>
+    <i className="bi bi-box-arrow-right"></i>
+    <span>Logout</span>
+  </button>
+</div>
+
 
     </div>
   );
