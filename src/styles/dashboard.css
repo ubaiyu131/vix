@@ -3,33 +3,54 @@
   padding: 20px;
   min-height: 100vh;
   background: #ffffff;
-  max-width: 70%;      /* limit width to 70% on large screens */
-  margin: 0 auto;      /* center horizontally */
-  box-sizing: border-box; /* ensures padding doesn't exceed max-width */
+  max-width: 70%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding-bottom: 50px; /* leave space for any floating elements */
 }
-/* Optional: make it fully responsive for smaller screens */
+
 @media (max-width: 1024px) {
   .dashboard-container {
-    max-width: 90%;   /* take more width on smaller screens */
+    max-width: 90%;
   }
 }
+
 @media (max-width: 768px) {
   .dashboard-container {
-    max-width: 100%;  /* full width on mobile */
+    max-width: 100%;
     padding: 15px;
   }
 }
-/* === Top Navigation === */
-.top-nav {
+
+/* === Wallet Section === */
+.wallet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.wallet-card {
+  background: #be1d2d;
+  color: #fff;
+  padding: 18px 20px;
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-.brand {
-  font-size: 24px;
-  font-weight: 700;
-  color: #be1d2d;
+
+.wallet-address {
+  font-size: 14px;
 }
+
+.wallet-balance {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
 .wallet-btn {
   padding: 10px 18px;
   background: #be1d2d;
@@ -39,16 +60,22 @@
   cursor: pointer;
   font-size: 14px;
 }
+
 .wallet-btn.connected {
   background: #444;
 }
-/* === Cards === */
+
+/* === Services Section === */
+.services-section {
+  margin-top: 20px;
+}
+
 .cards-wrapper {
-  margin-top: 35px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 20px;
 }
+
 .dash-card {
   background: white;
   padding: 25px;
@@ -58,16 +85,45 @@
   color: #be1d2d;
   text-decoration: none;
   transition: 0.3s ease;
+  cursor: pointer;
 }
+
 .dash-card i {
   font-size: 40px;
   margin-bottom: 10px;
 }
+
 .dash-card:hover {
   background: #be1d2d;
   color: white;
 }
-/* === Forms === */
+
+/* Verification Cards (NIN/BVN) */
+.dash-card.verify {
+  border: 2px dashed #22c55e;
+}
+
+/* Faucet Card */
+.dash-card.faucet-card {
+  border: 2px solid #0f172a;
+  color: #0f172a;
+  transition: 0.3s;
+}
+
+.dash-card.faucet-card:hover {
+  background: #0f172a;
+  color: #fff;
+}
+
+/* === Section Titles === */
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #be1d2d;
+  margin-bottom: 15px;
+}
+
+/* === Forms (if needed later) === */
 .form-container {
   max-width: 450px;
   margin: 40px auto;
@@ -75,10 +131,12 @@
   border: 2px solid #be1d2d;
   border-radius: 10px;
 }
+
 .form-container h3 {
   color: #be1d2d;
   margin-bottom: 15px;
 }
+
 .form-input {
   width: 100%;
   padding: 12px;
@@ -101,36 +159,14 @@
 .submit-btn:hover {
   opacity: 0.8;
 }
-.dashboard-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 30px;
-}
 
-.action-btn {
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: none;
-  background-color: #be1d2d;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
-  transition: all 0.3s;
-  margin-top: 30px;
-}
-.action-btn:hover {
-  background-color: #8a151e;
-}
-.logout-btn {
-  background-color: #555;
-  margin-top: 30px;
-}
-.logout-btn:hover {
-  background-color: #333;
-}
-.dashboard-actions{
-  margin-top: 100px;
+/* Responsive tweaks for mobile */
+@media (max-width: 768px) {
+  .cards-wrapper {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+  .dash-card i {
+    font-size: 30px;
+  }
 }

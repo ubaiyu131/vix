@@ -1,5 +1,6 @@
 .page-wrapper {
   width: 70%;
+  max-width: 700px; /* limit card width for larger screens */
   margin: auto;
   padding: 20px;
 }
@@ -8,34 +9,45 @@
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 20px;
+  text-align: center;
 }
 
+/* Transaction List */
 .trans-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* Transaction Card */
 .trans-card {
   background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: transform 0.2s ease;
 }
 
+.trans-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Amount */
 .amount {
   font-size: 18px;
   font-weight: 700;
 }
 
+/* Date */
 .date {
   font-size: 14px;
   color: gray;
 }
 
+/* Status */
 .status {
   padding: 6px 14px;
   border-radius: 20px;
@@ -55,4 +67,32 @@
 
 .status.failed {
   background: #dc3545;
+}
+
+/* ====== Responsive for Mobile ====== */
+@media (max-width: 768px) {
+  .page-wrapper {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .trans-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .amount {
+    font-size: 16px;
+  }
+
+  .date {
+    font-size: 13px;
+  }
+
+  .status {
+    font-size: 13px;
+    padding: 5px 12px;
+  }
 }

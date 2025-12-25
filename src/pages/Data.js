@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import "../styles/data.css";
 
 const Data = () => {
+  const { connected, account } = useWallet();
+  const [walletAddress, setWalletAddress] = useState("");
+
   const [network, setNetwork] = useState("");
   const [phone, setPhone] = useState("");
   const [plan, setPlan] = useState("");
+
+  // Load wallet address from localStorage for display
+  useEffect(() => {
+    const storedAddress = localStorage.getItem("wallet_address");
+    if (storedAddress) setWalletAddress(storedAddress);
+    else if (connected && account?.address) setWalletAddress(account.address);
+  }, [connected, account]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,10 +24,32 @@ const Data = () => {
 
   return (
     <div className="data-container">
+
+      {/* Wallet Address Card */}
+      {walletAddress && (
+        <div style={{ marginBottom: 20, textAlign: "center" }}>
+          <button
+            style={{
+              width: "fit-content",
+              minWidth: 220,
+              padding: "10px 20px",
+              cursor: "default",
+              backgroundColor: "#be1d2d",
+              color: "#fff",
+              border: "none",
+              borderRadius: 25,
+              fontWeight: 600,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+          </button>
+        </div>
+      )}
+
       <h2 className="title">Buy Data</h2>
 
       <form className="form-box" onSubmit={handleSubmit}>
-
         <label>Network</label>
         <select
           className="input"

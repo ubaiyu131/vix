@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { toast, Toaster } from "sonner";
 import "../styles/airtime.css";
 
 export default function AirtimeWithMove() {
-  const { connected, account, signAndSubmitTransaction, network } = useWallet();
+  const { wallets, connect, connected, account, signAndSubmitTransaction, network } = useWallet();
 
-  const [walletAddress, setWalletAddress] = useState("");
   const [networkValue, setNetworkValue] = useState("");
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
@@ -36,28 +35,36 @@ export default function AirtimeWithMove() {
     return `https://explorer.movementnetwork.xyz/txn/${hash}?network=${cfg.explorer}`;
   };
 
-  // Load wallet address from localStorage for display
-  useEffect(() => {
-    const storedAddress = localStorage.getItem("wallet_address");
-    if (storedAddress) setWalletAddress(storedAddress);
-  }, []);
+  // Connect Nightly Wallet
+  const handleConnectNightly = async () => {
+    try {
+      const nightlyWallet = wallets.find((w) => w.name.toLowerCase().includes("nightly"));
+      if (!nightlyWallet) return toast.error("Nightly Wallet not found. Install it first.");
+      await connect(nightlyWallet.name);
+      toast.success("Nightly Wallet connected!");
+    } catch (err) {
+      toast.error("Failed to connect Nightly Wallet");
+      console.error(err);
+    }
+  };
 
+  // Handle payment + airtime
   const handleBuyAirtime = async (e) => {
     e.preventDefault();
+    if (!connected || !account) return toast.error("Connect your Nightly Wallet first");
 
-    if (!connected || !account) return toast.error("Wallet not connected! Connect via Dashboard first.");
-    if (!networkValue || !phone || !amount) return toast.error("Please fill all fields");
+    if (!networkValue || !phone || !amount) return toast.error("Fill all fields");
 
     setIsLoading(true);
     const t = toast.loading("Sending 0.5 MOVE payment...");
 
     try {
-      // Sign and submit transaction using wallet adapter
+      // Send 0.5 MOVE = 50,000,000 octas
       const response = await signAndSubmitTransaction({
         sender: account.address,
         data: {
           function: "0x1::aptos_account::transfer",
-          functionArguments: [TREASURY_ADDRESS, 1000000], // 0.5 MOVE in octas
+          functionArguments: [TREASURY_ADDRESS, 1000000],
         },
       });
 
@@ -87,17 +94,13 @@ export default function AirtimeWithMove() {
       const data = await res.json();
       console.log("API Response:", data);
 
-      if (
-        (data.status && data.status === true) ||
-        (data.code && data.code === 200) ||
-        (data.message && data.message.toLowerCase().includes("success"))
-      ) {
-        toast.success(`Airtime Purchase Successful!\nNetwork: ${networkValue}\nPhone: ${phone}\nAmount: ₦${amount}`);
+      if ((data.status && data.status === true) || (data.code && data.code === 200) || (data.message && data.message.toLowerCase().includes("success"))) {
+        alert(`Airtime Purchase Successful!\nNetwork: ${networkValue}\nPhone: ${phone}\nAmount: ₦${amount}`);
         setNetworkValue("");
         setPhone("");
         setAmount("");
       } else {
-        toast.error("Airtime purchase failed: " + (data.message || "Unknown error"));
+        alert("Airtime purchase failed: " + (data.message || "Unknown error"));
       }
 
     } catch (err) {
@@ -113,37 +116,37 @@ export default function AirtimeWithMove() {
       <Toaster richColors />
 
       {/* Wallet Status */}
-      {walletAddress && (
-        <div style={{ marginBottom: 20, textAlign: "center" }}>
-          <button
-            style={{
-              width: "fit-content",
-              minWidth: 220,
-              padding: "10px 20px",
-              cursor: "default",
-              backgroundColor: "#be1d2d",
-              color: "#fff",
-              border: "none",
-              borderRadius: 25,
-              fontWeight: 600,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            }}
-          >
-            Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-          </button>
-        </div>
+      <div style={{ marginBottom: 20 }}>
+        <button
+          style={{
+            width: "100%",
+            padding: 10,
+            cursor: "default",
+            backgroundColor: connected ? "#4CAF50" : "#f44336",
+            color: "#fff",
+            border: "none",
+            borderRadius: 5,
+          }}
+        >
+          {connected ? `Connected: ${account.address}` : "Wallet not connected"}
+        </button>
+      </div>
+
+      {!connected && (
+        <button
+          onClick={handleConnectNightly}
+          disabled={isLoading}
+          style={{ width: "100%", padding: 10, marginBottom: 12, cursor: "pointer" }}
+        >
+          {isLoading ? "Connecting..." : "Connect Nightly Wallet"}
+        </button>
       )}
 
       <h2 className="title">Buy Airtime</h2>
 
       <form className="form-box" onSubmit={handleBuyAirtime}>
         <label>Network</label>
-        <select
-          className="input"
-          value={networkValue}
-          onChange={(e) => setNetworkValue(e.target.value)}
-          required
-        >
+        <select className="input" value={networkValue} onChange={(e) => setNetworkValue(e.target.value)} required>
           <option value="">Select Network</option>
           <option value="1">MTN</option>
           <option value="2">Airtel</option>
@@ -171,9 +174,11 @@ export default function AirtimeWithMove() {
           required
         />
 
-        <button className="submit-btn" type="submit" disabled={isLoading}>
-          {isLoading ? "Processing..." : "Buy Airtime (0.5 MOVE)"}
-        </button>
+        {connected && (
+          <button className="submit-btn" type="submit" disabled={isLoading}>
+            {isLoading ? "Processing..." : "Buy Airtime (0.5 MOVE)"}
+          </button>
+        )}
       </form>
     </div>
   );
