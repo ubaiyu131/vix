@@ -11,7 +11,6 @@ function App() {
       <Routes>
         {/* Landing page */}
         <Route path="/" element={<Dashboard />} />
- 
         {/* Other pages */}
         <Route path="/airtime" element={<Airtime />} />
         <Route path="/data" element={<Data />} />
