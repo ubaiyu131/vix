@@ -3,23 +3,9 @@
   padding: 20px;
   min-height: 100vh;
   background: #ffffff;
-  max-width: 70%;
+  max-width: 1100px;
   margin: 0 auto;
   box-sizing: border-box;
-  padding-bottom: 50px; /* leave space for any floating elements */
-}
-
-@media (max-width: 1024px) {
-  .dashboard-container {
-    max-width: 90%;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-container {
-    max-width: 100%;
-    padding: 15px;
-  }
 }
 
 /* === Wallet Section === */
@@ -27,13 +13,13 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .wallet-card {
   background: #be1d2d;
   color: #fff;
-  padding: 18px 20px;
+  padding: 16px 18px;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
@@ -52,7 +38,8 @@
 }
 
 .wallet-btn {
-  padding: 10px 18px;
+  width: fit-content;
+  padding: 10px 20px;
   background: #be1d2d;
   color: white;
   border: none;
@@ -61,36 +48,44 @@
   font-size: 14px;
 }
 
-.wallet-btn.connected {
-  background: #444;
-}
-
 /* === Services Section === */
 .services-section {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
+/* ===== GRID RULES ===== */
 .cards-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
 }
 
+/* === Cards === */
 .dash-card {
-  background: white;
-  padding: 25px;
+  background: #ffffff;
+  padding: 22px 18px;
   border-radius: 12px;
   text-align: center;
   border: 2px solid #be1d2d;
   color: #be1d2d;
   text-decoration: none;
-  transition: 0.3s ease;
+  transition: 0.25s ease;
   cursor: pointer;
 }
 
 .dash-card i {
-  font-size: 40px;
-  margin-bottom: 10px;
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.dash-card h4 {
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.dash-card p {
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 .dash-card:hover {
@@ -98,16 +93,10 @@
   color: white;
 }
 
-/* Verification Cards (NIN/BVN) */
-.dash-card.verify {
-  border: 2px dashed #22c55e;
-}
-
-/* Faucet Card */
+/* === Faucet Card === */
 .dash-card.faucet-card {
   border: 2px solid #0f172a;
   color: #0f172a;
-  transition: 0.3s;
 }
 
 .dash-card.faucet-card:hover {
@@ -123,50 +112,92 @@
   margin-bottom: 15px;
 }
 
-/* === Forms (if needed later) === */
-.form-container {
-  max-width: 450px;
-  margin: 40px auto;
-  padding: 25px;
-  border: 2px solid #be1d2d;
-  border-radius: 10px;
+/* ===================== */
+/* ===== MOBILE FOOTER (APPLIES ON ALL SCREENS) ==== */
+/* ===================== */
+/* Mobile & Desktop Footer */
+.mobile-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  z-index: 1000;
 }
 
-.form-container h3 {
+.mobile-footer .footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: #be1d2d;
-  margin-bottom: 15px;
+  text-decoration: none;
+  font-size: 15px; /* smaller than 18px, slightly larger than default */
 }
 
-.form-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #be1d2d;
-  border-radius: 6px;
-  margin-bottom: 15px;
+.mobile-footer .footer-item i {
+  font-size: 20px;
+  margin-bottom: 4px; /* spacing between icon and text */
 }
 
-.submit-btn {
-  width: 100%;
-  background: #be1d2d;
-  color: white;
-  padding: 12px;
-  border-radius: 6px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
 
-.submit-btn:hover {
-  opacity: 0.8;
-}
+/* ===================== */
+/* ===== RESPONSIVE ==== */
+/* ===================== */
 
-/* Responsive tweaks for mobile */
-@media (max-width: 768px) {
+/* Tablet */
+@media (max-width: 1024px) {
   .cards-wrapper {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 15px;
+  }
+
+  .cards-wrapper {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row */
+    gap: 12px;
+  }
+
+  .dash-card {
+    padding: 14px 10px;
+    border-radius: 10px;
+  }
+
   .dash-card i {
-    font-size: 30px;
+    font-size: 26px;
+  }
+
+  .dash-card h4 {
+    font-size: 13px;
+  }
+
+  .dash-card p {
+    font-size: 11px;
+  }
+
+  .mobile-footer .footer-item {
+    font-size: 18px; /* same as desktop for consistency */
+  }
+
+  .mobile-footer .footer-item i {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 420px) {
+  .cards-wrapper {
+    grid-template-columns: repeat(1, 1fr); /* 1 card per row for very small screens */
   }
 }

@@ -36,7 +36,6 @@ export default function AirtimeWithMove() {
     return `https://explorer.movementnetwork.xyz/txn/${hash}?network=${cfg.explorer}`;
   };
 
-  // Load wallet address from localStorage for display
   useEffect(() => {
     const storedAddress = localStorage.getItem("wallet_address");
     if (storedAddress) setWalletAddress(storedAddress);
@@ -52,7 +51,7 @@ export default function AirtimeWithMove() {
     const t = toast.loading("Sending 0.5 MOVE payment...");
 
     try {
-      // Sign and submit transaction using wallet adapter
+      // 1️⃣ Sign and submit MOVE payment
       const response = await signAndSubmitTransaction({
         sender: account.address,
         data: {
@@ -72,32 +71,50 @@ export default function AirtimeWithMove() {
         },
       });
 
-      // Call Airtime API after payment success
-      const payload = {
-        network: Number(networkValue),
-        phone,
-        amount: Number(amount),
-      };
-
+      // 2️⃣ Call Airtime API
+      const airtimePayload = { network: Number(networkValue), phone, amount: Number(amount) };
       const res = await fetch("https://api.captainbayyu.com.ng/buyAirtime.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(airtimePayload),
       });
       const data = await res.json();
-      console.log("API Response:", data);
+      console.log("Airtime API Response:", data);
 
+      // 3️⃣ Determine status based on Airtime API response
+      let txnStatus = "failed";
       if (
         (data.status && data.status === true) ||
         (data.code && data.code === 200) ||
         (data.message && data.message.toLowerCase().includes("success"))
       ) {
+        txnStatus = "success";
         toast.success(`Airtime Purchase Successful!\nNetwork: ${networkValue}\nPhone: ${phone}\nAmount: ₦${amount}`);
         setNetworkValue("");
         setPhone("");
         setAmount("");
       } else {
         toast.error("Airtime purchase failed: " + (data.message || "Unknown error"));
+      }
+
+      // 4️⃣ Save transaction to PHP backend
+      try {
+        await fetch("https://api.captainbayyu.com.ng/transaction.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    walletAddress: walletAddress,
+    network: networkValue,
+    phone: phone,
+    amount: amount,
+    txnHash: response.hash,
+    status: txnStatus
+  }),
+});
+
+        console.log("Transaction saved to database via PHP");
+      } catch (err) {
+        console.error("Failed to save transaction:", err);
       }
 
     } catch (err) {
@@ -175,6 +192,29 @@ export default function AirtimeWithMove() {
           {isLoading ? "Processing..." : "Buy Airtime (0.5 MOVE)"}
         </button>
       </form>
+
+      {/* Airtime Footer */}
+      <div className="airtime-footer">
+        <a href="/" className="footer-item">
+          <i className="bi bi-house"></i>
+          <span>Home</span>
+        </a>
+
+        <a href="/transactions" className="footer-item">
+          <i className="bi bi-receipt"></i>
+          <span>Transactions</span>
+        </a>
+
+        <div
+          className="footer-item"
+          onClick={() =>
+            window.open("https://faucet.movementnetwork.xyz/", "_blank")
+          }
+        >
+          <i className="bi bi-droplet"></i>
+          <span>Faucet</span>
+        </div>
+      </div>
     </div>
   );
 }

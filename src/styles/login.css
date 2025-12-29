@@ -1,168 +1,96 @@
-/* styles/login.css */
-
-/* ===== Container ===== */
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #ffffff;
-  padding: 20px;
-  font-family: 'Poppins', sans-serif;
-}
-/* ===== Card Container ===== */
-.card {
-  width: 80%;
+/* === Data Page Container === */
+.data-container {
   max-width: 450px;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  transition: all 0.3s ease-in-out;
+  margin: 0 auto;
+  padding: 25px;
 }
 
-/* ===== Logo Container ===== */
-.profile-container {
-  display: flex;
-  justify-content: center;
+/* === Page Title === */
+.title {
+  text-align: center;
   margin-bottom: 20px;
-}
-
-.profile-pic {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #be1d2d; /* Theme color */
-}
-.wallet-btn {
-  background: #be1d2d;
-  color: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.wallet-btn:hover {
-  opacity: 0.85;
-}
-
-
-/* ===== Headings ===== */
-h4 {
-  font-weight: 650;
-  margin-bottom: 5px;
-  color: #222;
-}
-
-p.text-muted {
-  font-size: 0.9rem;
-  color: #777;
-}
-
-/* ===== Inputs ===== */
-.form-control {
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 0.95rem;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  transition: all 0.3s;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #be1d2d;
-  box-shadow: 0 0 6px rgba(190, 29, 45, 0.4);
-}
-
-/* ===== Primary Button ===== */
-button.btn {
-  border-radius: 8px;
-  padding: 12px;
-  font-weight: 600;
-  border: 2px solid #be1d2d;
   color: #be1d2d;
-  background: transparent;
-  transition: all 0.3s ease;
+  font-size: 24px;
+  font-weight: 700;
 }
 
-button.btn:hover {
-  background-color: #be1d2d;
-  color: #fff;
+/* === Form Box === */
+.form-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.input:focus {
   border-color: #be1d2d;
 }
 
-/* ===== Google Button ===== */
-#googleBtn {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+/* === Submit Button === */
+.submit-btn {
+  background: #be1d2d;
+  padding: 12px;
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
   margin-top: 10px;
 }
 
-/* ===== Link Styling ===== */
-p.text-center a {
+.submit-btn:hover {
+  background: #8a151e;
+}
+
+/* === Footer === */
+.data-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.data-footer .footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   color: #be1d2d;
   text-decoration: none;
-  font-weight: 500;
+  font-size: 15px;
 }
 
-p.text-center a:hover {
-  text-decoration: underline;
-}
-
-/* ===== Theme Toggle Button ===== */
-.toggle-btn {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  border: none;
-  background: none;
-  font-size: 1.4rem;
+.data-footer .footer-item i {
+  font-size: 20px;
+  margin-bottom: 6px;
   cursor: pointer;
-  color: #be1d2d;
 }
 
-/* ============================= */
-/*           DARK MODE           */
-/* ============================= */
-body[data-theme="dark"] {
-  background: #1b1b1b;
-  color: #eee;
+/* === Responsive Adjustments === */
+@media (max-width: 768px) {
+  .data-container {
+    padding: 15px;
+  }
 }
 
-body[data-theme="dark"] .card {
-  background: #242424;
-  color: #fff;
-}
-
-body[data-theme="dark"] p.text-muted {
-  color: #b5b5b5;
-}
-
-body[data-theme="dark"] .form-control {
-  background: #333;
-  border: 1px solid #555;
-  color: #fff;
-}
-
-body[data-theme="dark"] .form-control:focus {
-  border-color: #be1d2d;
-  box-shadow: 0 0 6px rgba(190, 29, 45, 0.5);
-}
-
-body[data-theme="dark"] .toggle-btn {
-  color: #fff;
-}
-
-body[data-theme="dark"] button.btn {
-  border-color: #be1d2d;
-  color: #be1d2d;
-}
-body[data-theme="dark"] button.btn:hover {
-  background: #be1d2d;
-  color: #fff;
+@media (max-width: 420px) {
+  .data-footer {
+    padding: 8px 0;
+  }
 }

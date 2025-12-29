@@ -1,23 +1,28 @@
-.page-wrapper {
-  width: 70%;
-  margin: auto;
-  padding: 20px;
+/* === Cable Page Container === */
+.cable-container {
+  max-width: 450px;  /* Same as Airtime */
+  margin: 0 auto;
+  padding: 25px;
 }
 
+/* === Page Title === */
 .page-title {
-  font-size: 26px;
-  font-weight: 700;
+  text-align: center;
   margin-bottom: 20px;
+  color: #be1d2d;
+  font-size: 24px;
+  font-weight: 700;
 }
 
+/* === Form Card === */
 .card-box {
   background: #ffffff;
   padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .card-box label {
@@ -26,23 +31,66 @@
 
 .card-box input,
 .card-box select {
-  padding: 13px;
-  border-radius: 12px;
-  border: 1px solid #dcdcdc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
   font-size: 15px;
 }
 
+/* === Submit Button === */
 .btn-primary {
   background: #be1d2d;
-  color: #fff;
+  padding: 12px;
   border: none;
-  padding: 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
+  color: #fff;
+  border-radius: 8px;
   font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 .btn-primary:hover {
-  background: #be1d2d;
+  background: #8a151e;
+}
+
+/* === Footer (Airtime-style) === */
+.cable-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 450px; /* Match Airtime */
+  margin: 0 auto;
+  z-index: 1000;
+}
+
+.cable-footer .footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #be1d2d;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.cable-footer .footer-item i {
+  font-size: 20px;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+
+/* === Responsive === */
+@media (max-width: 420px) {
+  .cable-container {
+    padding: 15px;
+  }
+
+  .cable-footer {
+    max-width: 100%;
+  }
 }

@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/dashboard.css";
 import { Link } from "react-router-dom";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 
 const Dashboard = () => {
-  const [walletAddress, setWalletAddress] = useState("");
+  const [walletAddress, setWalletAddress] = useState(
+    localStorage.getItem("wallet_address") || ""
+  );
   const [walletBalance, setWalletBalance] = useState(null);
 
-  // MOVEMENT / APTOS CLIENT
   const aptos = new Aptos(
     new AptosConfig({
       network: Network.CUSTOM,
       fullnode: "https://testnet.movementnetwork.xyz/v1",
     })
   );
-
-  // Load wallet from localStorage
-  useEffect(() => {
-    const savedAddress = localStorage.getItem("wallet_address");
-    if (savedAddress) {
-      setWalletAddress(savedAddress);
-      fetchBalance(savedAddress);
-    }
-  }, []);
 
   // Fetch balance
   const fetchBalance = async (address) => {
@@ -41,38 +33,47 @@ const Dashboard = () => {
     }
   };
 
-  // Connect wallet
+  // Connect Nightly Wallet
   const connectWallet = async () => {
     try {
-      if (!window.nightly?.aptos) {
-        alert("Nightly Wallet not detected! Please install Nightly Wallet.");
-        return;
-      }
-
-      const account = await window.nightly.aptos.connect();
-
-      if (account?.address) {
-        setWalletAddress(account.address);
-        localStorage.setItem("wallet_address", account.address);
-        fetchBalance(account.address);
+      if (window.nightly?.aptos) {
+        const account = await window.nightly.aptos.connect();
+        if (account?.address) {
+          setWalletAddress(account.address);
+          localStorage.setItem("wallet_address", account.address);
+          fetchBalance(account.address);
+        }
+      } else {
+        alert(
+          "Nightly Wallet not detected! On mobile, WalletConnect or deep linking is required."
+        );
       }
     } catch (error) {
-      console.error(error);
+      console.error("Unable to connect Nightly Wallet:", error);
       alert("Unable to connect Nightly Wallet.");
     }
   };
 
-  // Faucet click handler (replace with actual faucet API)
-  const handleFaucetClick = () => {
-    alert("Testnet tokens requested! (implement faucet API here)");
+  // Disconnect wallet
+  const disconnectWallet = () => {
+    setWalletBalance(null);
+    setWalletAddress("");
+    localStorage.removeItem("wallet_address");
   };
+
+  // Auto-fetch balance
+  useEffect(() => {
+    if (walletAddress) {
+      fetchBalance(walletAddress);
+    }
+  }, [walletAddress]);
 
   return (
     <div className="dashboard-container">
-      
-      {/* WALLET SECTION */}
+      {/* ================= WALLET SECTION ================= */}
       <div className="wallet-section">
         <h2 className="brand">VixPay Web3</h2>
+
         {walletAddress ? (
           <div className="wallet-card">
             <div className="wallet-address">
@@ -83,6 +84,12 @@ const Dashboard = () => {
                 ? `${walletBalance.toFixed(3)} MOVE`
                 : "Loading..."}
             </div>
+            <button
+              className="wallet-disconnect-btn"
+              onClick={disconnectWallet}
+            >
+              Disconnect
+            </button>
           </div>
         ) : (
           <button className="wallet-btn" onClick={connectWallet}>
@@ -91,67 +98,56 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* SERVICES SECTION */}
+      {/* ================= SERVICES SECTION ================= */}
       <div className="services-section">
         <h3 className="section-title">Services</h3>
+
         <div className="cards-wrapper">
           <Link to="/airtime" className="dash-card">
             <i className="bi bi-phone"></i>
-            <h4>Airtime</h4>
+            <h3>Airtime</h3>
             <p>Top-up instantly using Move wallet</p>
           </Link>
 
           <Link to="/data" className="dash-card">
             <i className="bi bi-wifi"></i>
-            <h4>Data</h4>
+            <h3>Data</h3>
             <p>Crypto data bundles</p>
           </Link>
 
           <Link to="/cable" className="dash-card">
             <i className="bi bi-tv"></i>
-            <h4>Cable TV</h4>
+            <h3>Cable TV</h3>
             <p>DSTV • GOTV • Startimes</p>
           </Link>
-
-          <Link to="/nin-verification" className="dash-card verify">
-            <i className="bi bi-shield-check"></i>
-            <h4>NIN Verification</h4>
-            <p>National ID verification</p>
-          </Link>
-
-          <Link to="/bvn-verification" className="dash-card verify">
-            <i className="bi bi-fingerprint"></i>
-            <h4>BVN Verification</h4>
-            <p>Bank Verification Number</p>
-          </Link>
-
-          <Link to="/profile" className="dash-card">
-            <i className="bi bi-person-circle"></i>
-            <h4>Profile</h4>
-            <p>View and edit your profile</p>
-          </Link>
-
-          <Link to="/transactions" className="dash-card">
-            <i className="bi bi-receipt"></i>
-            <h4>Transactions</h4>
-            <p>View your transaction history</p>
-          </Link>
-
-          {/* Faucet as a card */}
-          <div
-  className="dash-card faucet-card"
-  onClick={() =>
-    window.open("https://faucet.testnet.movementnetwork.xyz/", "_blank")
-  }
->
-  <i className="bi bi-droplet"></i>
-  <h4>Faucet</h4>
-  <p>Click to get testnet token</p>
-</div>
-
         </div>
       </div>
-      
+
+      {/* ================= MOBILE FOOTER ================= */}
+      <div className="mobile-footer">
+        <Link to="/" className="footer-item">
+          <i className="bi bi-house"></i>
+          <span>Home</span>
+        </Link>
+
+        <Link to="/transactions" className="footer-item">
+          <i className="bi bi-receipt"></i>
+          <span>Transactions</span>
+        </Link>
+
+        <div
+          className="footer-item"
+          onClick={() =>
+            window.open(
+              "https://faucet.movementnetwork.xyz/",
+              "_blank"
+            )
+          }
+        >
+          <i className="bi bi-droplet"></i>
+          <span>Faucet</span>
+        </div>
+      </div>
     </div>
   );
 };

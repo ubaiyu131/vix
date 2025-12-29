@@ -4,6 +4,7 @@ import Airtime from "./pages/Airtime";
 import Data from "./pages/Data";
 import Cable from "./pages/Cable";
 import Transactions from "./pages/Transactions";
+import Receipt from "./pages/Receipt"; // <- your new receipt page
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/data" element={<Data />} />
         <Route path="/cable" element={<Cable />} />
         <Route path="/transactions" element={<Transactions />} />
+        <Route path="/receipt" element={<Receipt />} />
       </Routes>
     </Router>
   );

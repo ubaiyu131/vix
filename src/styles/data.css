@@ -1,15 +1,20 @@
+/* === Data Page Container === */
 .data-container {
   max-width: 450px;
   margin: 0 auto;
   padding: 25px;
 }
 
+/* === Page Title === */
 .title {
   text-align: center;
   margin-bottom: 20px;
   color: #be1d2d;
+  font-size: 24px;
+  font-weight: 700;
 }
 
+/* === Form Box === */
 .form-box {
   background: #fff;
   padding: 25px;
@@ -24,13 +29,14 @@
   padding: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  outline: none;
   font-size: 15px;
 }
 
 .input:focus {
   border-color: #be1d2d;
 }
+
+/* === Submit Button === */
 .submit-btn {
   background: #be1d2d;
   padding: 12px;
@@ -41,6 +47,58 @@
   cursor: pointer;
   margin-top: 10px;
 }
+
 .submit-btn:hover {
   background: #8a151e;
+}
+
+/* === Footer === */
+.data-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  left: 50%;              /* Center horizontally */
+  transform: translateX(-50%); /* Match container */
+  width: 100%;
+  max-width: 450px;        /* Match container width on desktop */
+  z-index: 1000;
+}
+
+.data-footer .footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #be1d2d;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.data-footer .footer-item i {
+  font-size: 20px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+/* === Responsive Adjustments === */
+@media (max-width: 768px) {
+  .data-container {
+    padding: 15px;
+  }
+  
+  .data-footer {
+    max-width: 100%;      /* Full width on smaller screens */
+    left: 0;
+    transform: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .data-footer {
+    padding: 8px 0;
+  }
 }

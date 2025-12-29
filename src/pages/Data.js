@@ -10,7 +10,7 @@ const Data = () => {
   const [phone, setPhone] = useState("");
   const [plan, setPlan] = useState("");
 
-  // Load wallet address from localStorage for display
+  // Load wallet address for display
   useEffect(() => {
     const storedAddress = localStorage.getItem("wallet_address");
     if (storedAddress) setWalletAddress(storedAddress);
@@ -24,7 +24,6 @@ const Data = () => {
 
   return (
     <div className="data-container">
-
       {/* Wallet Address Card */}
       {walletAddress && (
         <div style={{ marginBottom: 20, textAlign: "center" }}>
@@ -92,6 +91,27 @@ const Data = () => {
           Proceed to Pay
         </button>
       </form>
+
+      {/* Footer */}
+      <div className="data-footer">
+        <a href="/" className="footer-item">
+          <i className="bi bi-house"></i>
+          <span>Home</span>
+        </a>
+
+        <a href="/transactions" className="footer-item">
+          <i className="bi bi-receipt"></i>
+          <span>Transactions</span>
+        </a>
+
+        <div
+          className="footer-item"
+          onClick={() => window.open("https://faucet.movementnetwork.xyz/", "_blank")}
+        >
+          <i className="bi bi-droplet"></i>
+          <span>Faucet</span>
+        </div>
+      </div>
     </div>
   );
 };
