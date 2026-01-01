@@ -5,7 +5,14 @@ import { toast, Toaster } from "sonner";
 import "../styles/airtime.css";
 
 export default function AirtimeWithMove() {
-  const { connected, account, signAndSubmitTransaction, network } = useWallet();
+  const {
+    account,
+    signAndSubmitTransaction,
+    network,
+    connect,
+    disconnect,
+    wallets,
+  } = useWallet();
 
   const [walletAddress, setWalletAddress] = useState("");
   const [networkValue, setNetworkValue] = useState("");
@@ -13,11 +20,55 @@ export default function AirtimeWithMove() {
   const [amount, setAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const TREASURY_ADDRESS = "0xaed38c636c9497b30090ea85394c4e84194d6677ff52e094fafd385ab73a4b57";
+  /* -------------------- CONNECT WALLET -------------------- */
+  const handleConnectWallet = async () => {
+    try {
+      if (!wallets || wallets.length === 0) {
+        toast.error("No Aptos wallet detected");
+        return;
+      }
+
+      // ✅ Prefer Nightly
+      const nightly = wallets.find(
+        (w) => w.name.toLowerCase() === "nightly"
+      );
+
+      const walletToUse = nightly ?? wallets[0];
+
+      await connect(walletToUse.name);
+      toast.success(`${walletToUse.name} wallet connected`);
+    } catch (err) {
+      toast.error("Wallet connection cancelled");
+    }
+  };
+
+  /* -------------------- DISCONNECT WALLET -------------------- */
+  const handleDisconnectWallet = async () => {
+    try {
+      await disconnect();
+      localStorage.removeItem("wallet_address");
+      setWalletAddress("");
+      toast.success("Wallet disconnected");
+    } catch {
+      toast.error("Failed to disconnect wallet");
+    }
+  };
+
+  /* -------------------- CONFIG -------------------- */
+  const TREASURY_ADDRESS =
+    "0xaed38c636c9497b30090ea85394c4e84194d6677ff52e094fafd385ab73a4b57";
 
   const MOVEMENT_CONFIGS = {
-    mainnet: { chainId: 126, fullnode: "https://full.mainnet.movementinfra.xyz/v1", explorer: "mainnet" },
-    testnet: { chainId: 250, fullnode: "https://testnet.movementnetwork.xyz/v1", explorer: "testnet" },
+    mainnet: {
+      chainId: 126,
+      fullnode: "https://full.mainnet.movementinfra.xyz/v1",
+      explorer: "mainnet",
+    },
+    testnet: {
+      chainId: 250,
+      fullnode: "https://testnet.movementnetwork.xyz/v1",
+      explorer: "testnet",
+    },
   };
 
   const getCurrentNetworkConfig = () => {
@@ -28,7 +79,9 @@ export default function AirtimeWithMove() {
 
   const getAptosClient = () => {
     const cfg = getCurrentNetworkConfig();
-    return new Aptos(new AptosConfig({ network: Network.CUSTOM, fullnode: cfg.fullnode }));
+    return new Aptos(
+      new AptosConfig({ network: Network.CUSTOM, fullnode: cfg.fullnode })
+    );
   };
 
   const getExplorerUrl = (hash) => {
@@ -36,27 +89,44 @@ export default function AirtimeWithMove() {
     return `https://explorer.movementnetwork.xyz/txn/${hash}?network=${cfg.explorer}`;
   };
 
+  /* -------------------- LOAD WALLET ADDRESS -------------------- */
   useEffect(() => {
-    const storedAddress = localStorage.getItem("wallet_address");
-    if (storedAddress) setWalletAddress(storedAddress);
+    const stored = localStorage.getItem("wallet_address");
+    if (stored && typeof stored === "string") {
+      setWalletAddress(stored);
+    }
   }, []);
 
+  useEffect(() => {
+    if (account?.address) {
+      const addr = String(account.address);
+      localStorage.setItem("wallet_address", addr);
+      setWalletAddress(addr);
+    }
+  }, [account]);
+
+  /* -------------------- BUY AIRTIME -------------------- */
   const handleBuyAirtime = async (e) => {
     e.preventDefault();
 
-    if (!connected || !account) return toast.error("Wallet not connected! Connect via Dashboard first.");
-    if (!networkValue || !phone || !amount) return toast.error("Please fill all fields");
+    if (!account) {
+      toast.error("Please connect wallet first");
+      return;
+    }
+
+    if (!networkValue || !phone || !amount) {
+      toast.error("Please fill all fields");
+      return;
+    }
 
     setIsLoading(true);
-    const t = toast.loading("Sending 0.5 MOVE payment...");
+    const t = toast.loading("Confirming transaction...");
 
     try {
-      // 1️⃣ Sign and submit MOVE payment
       const response = await signAndSubmitTransaction({
-        sender: account.address,
         data: {
           function: "0x1::aptos_account::transfer",
-          functionArguments: [TREASURY_ADDRESS, 1000000], // 0.5 MOVE in octas
+          functionArguments: [TREASURY_ADDRESS, 1_000_000],
         },
       });
 
@@ -67,89 +137,91 @@ export default function AirtimeWithMove() {
         id: t,
         action: {
           label: "View",
-          onClick: () => window.open(getExplorerUrl(response.hash), "_blank"),
+          onClick: () =>
+            window.open(getExplorerUrl(response.hash), "_blank"),
         },
       });
 
-      // 2️⃣ Call Airtime API
-      const airtimePayload = { network: Number(networkValue), phone, amount: Number(amount) };
-      const res = await fetch("https://api.captainbayyu.com.ng/buyAirtime.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(airtimePayload),
-      });
-      const data = await res.json();
-      console.log("Airtime API Response:", data);
+      const res = await fetch(
+        "https://api.captainbayyu.com.ng/buyAirtime.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            network: Number(networkValue),
+            phone,
+            amount: Number(amount),
+          }),
+        }
+      );
 
-      // 3️⃣ Determine status based on Airtime API response
-      let txnStatus = "failed";
-      if (
-        (data.status && data.status === true) ||
-        (data.code && data.code === 200) ||
-        (data.message && data.message.toLowerCase().includes("success"))
-      ) {
-        txnStatus = "success";
-        toast.success(`Airtime Purchase Successful!\nNetwork: ${networkValue}\nPhone: ${phone}\nAmount: ₦${amount}`);
+      const data = await res.json();
+
+      const txnStatus =
+        data?.status === true ||
+        data?.code === 200 ||
+        data?.message?.toLowerCase().includes("success")
+          ? "success"
+          : "failed";
+
+      if (txnStatus === "success") {
+        toast.success(`Airtime successful! ₦${amount}`);
         setNetworkValue("");
         setPhone("");
         setAmount("");
       } else {
-        toast.error("Airtime purchase failed: " + (data.message || "Unknown error"));
+        toast.error("Airtime failed");
       }
 
-      // 4️⃣ Save transaction to PHP backend
-      try {
-        await fetch("https://api.captainbayyu.com.ng/transaction.php", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    walletAddress: walletAddress,
-    network: networkValue,
-    phone: phone,
-    amount: amount,
-    txnHash: response.hash,
-    status: txnStatus
-  }),
-});
-
-        console.log("Transaction saved to database via PHP");
-      } catch (err) {
-        console.error("Failed to save transaction:", err);
-      }
-
+      await fetch("https://api.captainbayyu.com.ng/transaction.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          walletAddress,
+          network: networkValue,
+          phone,
+          amount,
+          txnHash: response.hash,
+          status: txnStatus,
+        }),
+      });
     } catch (err) {
-      toast.error(err?.message || "Transaction failed", { id: t });
       console.error(err);
+      toast.error("Transaction cancelled or failed", { id: t });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const shortAddress =
+    typeof walletAddress === "string" && walletAddress.length > 10
+      ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+      : "";
+
+  /* -------------------- UI -------------------- */
   return (
     <div className="airtime-container">
       <Toaster richColors />
 
-      {/* Wallet Status */}
-      {walletAddress && (
-        <div style={{ marginBottom: 20, textAlign: "center" }}>
-          <button
-            style={{
-              width: "fit-content",
-              minWidth: 220,
-              padding: "10px 20px",
-              cursor: "default",
-              backgroundColor: "#be1d2d",
-              color: "#fff",
-              border: "none",
-              borderRadius: 25,
-              fontWeight: 600,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            }}
-          >
-            Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+      {shortAddress && (
+        <div style={{ marginBottom: 15, textAlign: "center" }}>
+          <button className="wallet-pill">
+            Connected: {shortAddress}
           </button>
         </div>
       )}
+
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
+        {account ? (
+          <button onClick={handleDisconnectWallet} className="disconnect-btn">
+            Disconnect Wallet
+          </button>
+        ) : (
+          <button onClick={handleConnectWallet} className="connect-btn">
+            Connect Nightly Wallet
+          </button>
+        )}
+      </div>
 
       <h2 className="title">Buy Airtime</h2>
 
@@ -159,7 +231,6 @@ export default function AirtimeWithMove() {
           className="input"
           value={networkValue}
           onChange={(e) => setNetworkValue(e.target.value)}
-          required
         >
           <option value="">Select Network</option>
           <option value="1">MTN</option>
@@ -170,51 +241,46 @@ export default function AirtimeWithMove() {
 
         <label>Phone Number</label>
         <input
-          type="text"
           className="input"
-          placeholder="08012345678"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          required
         />
 
         <label>Amount (₦)</label>
         <input
           type="number"
           className="input"
-          placeholder="100"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          required
         />
 
-        <button className="submit-btn" type="submit" disabled={isLoading}>
+        <button className="submit-btn" disabled={isLoading}>
           {isLoading ? "Processing..." : "Buy Airtime (0.5 MOVE)"}
         </button>
       </form>
+      {/* Footer */}
+<div className="airtime-footer">
+  <a href="/" className="footer-item">
+    <i className="bi bi-house"></i>
+    <span>Home</span>
+  </a>
 
-      {/* Airtime Footer */}
-      <div className="airtime-footer">
-        <a href="/" className="footer-item">
-          <i className="bi bi-house"></i>
-          <span>Home</span>
-        </a>
+  <a href="/transactions" className="footer-item">
+    <i className="bi bi-receipt"></i>
+    <span>Transactions</span>
+  </a>
 
-        <a href="/transactions" className="footer-item">
-          <i className="bi bi-receipt"></i>
-          <span>Transactions</span>
-        </a>
+  <div
+    className="footer-item"
+    onClick={() =>
+      window.open("https://faucet.movementnetwork.xyz/", "_blank")
+    }
+  >
+    <i className="bi bi-droplet"></i>
+    <span>Faucet</span>
+  </div>
+</div>
 
-        <div
-          className="footer-item"
-          onClick={() =>
-            window.open("https://faucet.movementnetwork.xyz/", "_blank")
-          }
-        >
-          <i className="bi bi-droplet"></i>
-          <span>Faucet</span>
-        </div>
-      </div>
     </div>
   );
 }
